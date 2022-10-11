@@ -1,5 +1,6 @@
 from pages.base_page import BasePage
 from pages.locators import ProductPageLocators
+from selenium.common.exceptions import NoAlertPresentException
 import math
 
 class ProductPage(BasePage):
