@@ -1,11 +1,13 @@
 from pages.base_page import BasePage
 from pages.product_page import ProductPage
 from pages.basket_page import BasketPage
+from pages.login_page import LoginPage
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 from pages.locators import ProductPageLocators
 import pytest
+import time
 
 @pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
@@ -74,3 +76,47 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     basket_page = BasketPage(browser, browser.current_url)
     basket_page.check_text_with_a_message_about_an_empty_basket()
     basket_page.should_not_be_items_in_basket()
+    
+class TestUserAddToBasketFromProductPage():
+    
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/en-gb/accounts/login/"
+        email = str(time.time()) + "@fakemail.org"
+        password = "fakemail0102"
+        page = LoginPage(browser, link)
+        page.open()
+        page.register_new_user(email, password)
+        page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser): 
+        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207"
+        page = ProductPage(browser, link)
+        page.open()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207"
+        page = ProductPage(browser, link)
+        page.open()
+        page.add_product_to_basket()
+        book_name = page.get_book_name()
+        book_price = page.get_book_price()
+        page.compare_book_name_in_basket_and_in_cataloge(book_name)
+        page.compare_price_in_basket_and_in_cataloge(book_price)
+        time.sleep(2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
