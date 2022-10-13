@@ -13,10 +13,10 @@ class BasePage:
     def open(self):
         self.browser.get(self.url)
 
-    #def __init__(self, browser, url, timeout=10):
-        #self.browser = browser
-        #self.url = url
-        #self.browser.implicitly_wait(timeout)
+    def __init__(self, browser, url, timeout=10):
+        self.browser = browser
+        self.url = url
+        self.browser.implicitly_wait(timeout)
 
     def is_element_present(self, how, what):
         try:
@@ -45,6 +45,11 @@ class BasePage:
     def go_to_login_page(self):
         link = self.browser.find_element(*BasePageLocators.LOGIN_LINK)
         link.click()
+        
+    def go_to_basket_page(self):
+        basket_btn = self.browser.find_element(*BasePageLocators.VIEW_BASKET)
+        basket_btn.click()
+        
 
     def should_be_login_link(self):
         assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
